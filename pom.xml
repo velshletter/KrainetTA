@@ -8,6 +8,7 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
     <modules>
+        <module>base-domains</module>
         <module>auth-service</module>
         <module>notification-service</module>
     </modules>
@@ -114,6 +115,7 @@
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
+                        <parameters>true</parameters>
                         <annotationProcessorPaths>
                             <path>
                                 <groupId>org.mapstruct</groupId>
@@ -136,4 +138,4 @@
             </plugins>
         </pluginManagement>
     </build>
-</project> 
+</project>

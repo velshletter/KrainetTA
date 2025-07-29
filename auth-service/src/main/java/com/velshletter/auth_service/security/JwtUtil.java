@@ -1,6 +1,7 @@
 package com.velshletter.auth_service.security;
 
 import com.velshletter.auth_service.model.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -55,6 +56,14 @@ public class JwtUtil {
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
+    }
+
+    public Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(getSignKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     private SecretKey getSignKey() {

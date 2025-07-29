@@ -12,6 +12,8 @@ import com.velshletter.auth_service.repository.UserRepository;
 import com.velshletter.auth_service.security.CustomUserDetails;
 import com.velshletter.auth_service.security.JwtUtil;
 import com.velshletter.auth_service.service.AuthService;
+import com.velshletter.auth_service.service.UserNotificationService;
+import com.velshletter.base_domains.dto.ActionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,6 +39,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManager authenticationManager;
+    private final UserNotificationService userNotificationService;
 
     @Transactional
     public RegisterResponseDto saveUser(RegisterRequestDto dto) {
@@ -50,6 +53,8 @@ public class AuthServiceImpl implements AuthService {
                 .role(Role.USER)
                 .build();
         User savedUser = userRepository.save(user);
+
+        userNotificationService.notifyIfRegularUser(user, ActionType.CREATED, dto.password());
 
         return new RegisterResponseDto("User registered successfully", savedUser.getId());
     }

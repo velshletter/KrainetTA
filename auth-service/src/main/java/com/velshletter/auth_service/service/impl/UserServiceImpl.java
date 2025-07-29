@@ -10,7 +10,9 @@ import com.velshletter.auth_service.exception.UserNotFoundException;
 import com.velshletter.auth_service.model.User;
 import com.velshletter.auth_service.repository.UserRepository;
 import com.velshletter.auth_service.security.CustomUserDetails;
+import com.velshletter.auth_service.service.UserNotificationService;
 import com.velshletter.auth_service.service.UserService;
+import com.velshletter.base_domains.dto.ActionType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +29,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final UserNotificationService userNotificationService;
+
 
     @Override
     public UserResponseDto getCurrentUser(CustomUserDetails userDetails) {
@@ -53,11 +57,12 @@ public class UserServiceImpl implements UserService {
             }
             user.setEmail(email);
         });
-
         Optional.ofNullable(dto.firstName()).ifPresent(user::setFirstName);
         Optional.ofNullable(dto.lastName()).ifPresent(user::setLastName);
+
         userRepository.save(user);
 
+        userNotificationService.notifyIfRegularUser(user, ActionType.UPDATED, null);
         return userMapper.toUserDto(user);
     }
 
@@ -76,14 +81,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteCurrentUser(UUID userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException("User not found with id: " + userId);
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+
         userRepository.deleteById(userId);
+        userNotificationService.notifyIfRegularUser(user, ActionType.DELETED, null);
     }
 
     private User fetchUserOrThrow(UUID userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
     }
+
 }

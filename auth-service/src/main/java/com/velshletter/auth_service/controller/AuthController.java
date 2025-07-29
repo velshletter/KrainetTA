@@ -32,19 +32,19 @@ public class AuthController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<AuthResponseDto> refreshToken(@RequestParam(name = "refreshToken") UUID refreshToken) {
+    public ResponseEntity<AuthResponseDto> refreshToken(@RequestParam UUID refreshToken) {
         AuthResponseDto response = service.refreshToken(refreshToken);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> revokeToken(@RequestParam(name = "refreshToken") UUID refreshToken) {
+    public ResponseEntity<Void> revokeToken(@RequestParam UUID refreshToken) {
         service.revokeRefreshToken(refreshToken);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/validate")
-    public ResponseEntity<String> validateToken(@RequestParam("token") String token) {
+    public ResponseEntity<String> validateToken(@RequestParam String token) {
         service.validateToken(token);
         return ResponseEntity.ok("Token is valid");
     }

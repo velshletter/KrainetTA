@@ -47,21 +47,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             Claims claims = jwtUtil.extractAllClaims(jwtToken);
             log.info("JWT claims: {}", claims);
             String role = claims.get("role", String.class);
+            String subject = claims.getSubject();
 
             List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
-            log.info("Authorities = {}",authorities);
             UsernamePasswordAuthenticationToken authToken;
 
-
-            if (email != null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-                authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+            if ("ROLE_INTERNAL_SERVICE".equals(role)) {
+                authToken = new UsernamePasswordAuthenticationToken(
+                        subject, null, authorities);
             } else {
-                authToken =
-                        new UsernamePasswordAuthenticationToken(null, null, authorities);
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(subject);
+                authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
             }
 
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

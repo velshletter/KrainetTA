@@ -19,14 +19,13 @@ public class JwtServiceTokenProvider {
 
     @Value("${jwt.secret}")
     private String secret;
-    private final MailProperties mailProperties;
 
     public String getServiceToken() {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + 10 * 60 * 1000);
 
         var tok = Jwts.builder()
-            .subject(mailProperties.getFrom())
+            .subject("notification-service")
             .claim("role", "ROLE_INTERNAL_SERVICE")
             .issuedAt(now)
             .expiration(expiry)

@@ -9,6 +9,8 @@ import com.velshletter.auth_service.model.Role;
 import com.velshletter.auth_service.model.User;
 import com.velshletter.auth_service.repository.UserRepository;
 import com.velshletter.auth_service.service.AdminService;
+import com.velshletter.auth_service.service.UserNotificationService;
+import com.velshletter.base_domains.dto.ActionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,7 @@ public class AdminServiceImpl implements AdminService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final UserNotificationService userNotificationService;
 
     @Override
     public List<UserResponseDto> getAllUsers() {
@@ -39,8 +42,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public UserResponseDto updateUser(UUID userId, AdminUserUpdateRequestDto dto) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User with id " + userId + " not found"));
+        User user = fetchUser(userId);
 
         Optional.ofNullable(dto.username()).ifPresent(username -> {
             if (userRepository.existsByUsernameAndIdNot(username, userId)) {
@@ -61,6 +63,8 @@ public class AdminServiceImpl implements AdminService {
         Optional.ofNullable(dto.role()).ifPresent(user::setRole);
         userRepository.save(user);
 
+        userNotificationService.notifyIfRegularUser(user, ActionType.UPDATED, null);
+
         return userMapper.toUserDto(user);
     }
 
@@ -76,9 +80,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void deleteUser(UUID userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException("User not found with id: " + userId);
-        }
+        User user = fetchUser(userId);
+        userNotificationService.notifyIfRegularUser(user, ActionType.DELETED, null);
         userRepository.deleteById(userId);
     }
 

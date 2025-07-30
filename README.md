@@ -5,14 +5,14 @@
 1. **Клонировать репозиторий**
 
 ```bash
-git clone https://github.com/velshletter/krainet-system.git
-cd krainet-system
+git clone https://github.com/velshletter/KrainetTA.git
+cd KrainetTA
 ```
 
 2. **Создать `.env` файл**
 
 ```bash
-cp .env.example .env
+cp .env-example .env
 ```
 
 Заполнить переменные в `.env`:

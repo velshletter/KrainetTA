@@ -2,15 +2,15 @@ spring:
   application:
     name: auth-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/krainet_db
-    username: ${DB_USERNAME:db_user}
-    password: ${DB_PASSWORD:db_password}
+    url: jdbc:postgresql://postgres:5432/krainet_db
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: false
     open-in-view: false
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:

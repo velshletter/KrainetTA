@@ -12,7 +12,7 @@ cd krainet-system
 2. **Создать `.env` файл**
 
 ```bash
-cp .env.example .env
+cp .env-example .env
 ```
 
 Заполнить переменные в `.env`:

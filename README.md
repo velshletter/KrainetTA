@@ -6,7 +6,7 @@
 
 ```bash
 git clone https://github.com/velshletter/KrainetTA.git
-cd krainet-system
+cd KrainetTA
 ```
 
 2. **Создать `.env` файл**

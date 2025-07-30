@@ -5,7 +5,7 @@
 1. **Клонировать репозиторий**
 
 ```bash
-git clone https://github.com/velshletter/krainet-system.git
+git clone https://github.com/velshletter/KrainetTA.git
 cd krainet-system
 ```
 
